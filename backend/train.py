@@ -3,7 +3,9 @@ from feature import featurize
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import StratifiedKFold, cross_val_score
+#from sklearn.model_selection import StratifiedKFold, cross_val_score
+import pickle
+import json
 
 df = pd.read_csv("202526_shots.csv")
 
@@ -18,15 +20,30 @@ encoded = encoder.fit_transform(cat_df)
 
 # Convert num_df into numpy and stack horizontally to fit into model.
 X = np.hstack([num_df.to_numpy(), encoded])
-X = StandardScaler().fit_transform(X)
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
 
 y = df["SHOT_MADE_FLAG"]
 
 model = LogisticRegression(max_iter = 1000)
 model.fit(X, y)
 
-cross_validation = StratifiedKFold(n_splits=5, shuffle=True, random_state=123)
-scores = cross_val_score(model, X, y, cv=cross_validation, scoring= "roc_auc")
-print(scores.round(3))
-print(scores.mean().round(3))
-print(scores.std().round(3))
+#print(encoder.get_feature_names_out())
+with open("model.pkl", "wb") as f:
+    pickle.dump(model, f)
+
+with open("encoder.pkl", "wb") as f1:
+    pickle.dump(encoder, f1)
+
+with open("scaler.pkl", "wb") as f2:
+    pickle.dump(scaler, f2)
+
+num_cols = ["SHOT_DISTANCE", "SHOT_ANGLE", "TIME_LEFT_IN_Q", "PERIOD"]
+feature_names = num_cols + encoder.get_feature_names_out().tolist()
+json.dump(feature_names, open("feature_names.json", "w"))
+
+#cross_validation = StratifiedKFold(n_splits=5, shuffle=True, random_state=123)
+#scores = cross_val_score(model, X, y, cv=cross_validation, scoring= "roc_auc")
+#print(scores.round(3))
+#print(scores.mean().round(3))
+#print(scores.std().round(3))
