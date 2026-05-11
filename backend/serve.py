@@ -7,7 +7,7 @@ def predict(model, encoder, scaler, raw_input):
     num_vals = [f_dict["SHOT_DISTANCE"], f_dict["SHOT_ANGLE"], f_dict["TIME_LEFT_IN_Q"], f_dict["PERIOD"]]
     encoded = encoder.transform([cat_vals])
 
-    num_scaled = scaler.transform([num_vals])
-    X = np.hstack([num_scaled, encoded])
+    X = np.hstack([num_vals, encoded[0]])
+    X = scaler.transform([X])
 
     return model.predict_proba(X)[0][1]
