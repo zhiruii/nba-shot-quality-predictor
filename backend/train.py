@@ -10,11 +10,14 @@ import json
 
 df = pd.read_csv("202526_shots.csv")
 
+player_df = pd.read_csv("player_stats.csv")
+player_stats = player_df.set_index("PLAYER_ID")[["FG_PCT", "FG3_PCT"]].to_dict(orient="index")
+
 rows = df.to_dict(orient = 'records')
-features_df = pd.DataFrame([featurize(row) for row in rows])
+features_df = pd.DataFrame([featurize(row, player_stats=player_stats) for row in rows])
 
 cat_df = features_df[["SHOT_TYPE", "SHOT_ZONE_BASIC", "ACTION_TYPE"]]
-num_df = features_df[["SHOT_DISTANCE", "SHOT_ANGLE", "TIME_LEFT_IN_Q", "PERIOD"]]
+num_df = features_df[["SHOT_DISTANCE", "SHOT_ANGLE", "TIME_LEFT_IN_Q", "PERIOD", "PLAYER_FG_PCT", "PLAYER_3PT_PCT"]]
 
 encoder = OneHotEncoder(sparse_output=False, handle_unknown="error")
 encoded = encoder.fit_transform(cat_df)
@@ -51,6 +54,6 @@ with open("encoder.pkl", "wb") as f1:
 with open("scaler.pkl", "wb") as f2:
     pickle.dump(scaler, f2)
 
-num_cols = ["SHOT_DISTANCE", "SHOT_ANGLE", "TIME_LEFT_IN_Q", "PERIOD"]
+num_cols = ["SHOT_DISTANCE", "SHOT_ANGLE", "TIME_LEFT_IN_Q", "PERIOD", "PLAYER_FG_PCT", "PLAYER_3PT_PCT"]
 feature_names = num_cols + encoder.get_feature_names_out().tolist()
 json.dump(feature_names, open("feature_names.json", "w"))
