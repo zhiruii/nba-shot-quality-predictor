@@ -38,6 +38,8 @@ def _clean_value(col, val):
         return None
     if col == "GAME_DATE" and val is not None:
         return datetime.strptime(str(int(val)), "%Y%m%d").date()
+    if col == "GAME_ID":
+        return str(val).zfill(10)
     return val
 
 
