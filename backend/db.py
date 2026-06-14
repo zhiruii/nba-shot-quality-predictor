@@ -91,3 +91,36 @@ def upsert_player_stats(players):
         conn.commit()
     finally:
         conn.close()
+
+def fetch_all_shots():
+    conn = get_connection()
+    columns = [c.lower() for c in SHOTS_COLUMNS]
+    try:
+        with conn.cursor() as cur:
+            cur.execute(f"SELECT {', '.join(columns)} FROM shots")
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    result = []
+    for row in rows:
+        one_shot = dict(zip(SHOTS_COLUMNS, row))
+        result.append(one_shot)
+    return result
+
+def fetch_all_player_stats():
+    conn = get_connection()
+    columns = [c.lower() for c in PLAYERS_COLUMNS]
+    try:
+        with conn.cursor() as cur:
+            cur.execute(f"SELECT {', '.join(columns)} FROM player_stats")
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    result = {}
+    for row in rows:
+        player_id, fg_pct, fg3_pct, season = row
+        result[player_id] = {"FG_PCT": fg_pct, "FG3_PCT": fg3_pct}
+
+    return result
