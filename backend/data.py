@@ -1,20 +1,22 @@
+import db
 from nba_api.stats.endpoints import shotchartdetail, leaguedashplayerstats
 
-shots = shotchartdetail.ShotChartDetail(
+date_from = db.get_latest_shot_date()
+
+shot_kwargs = dict(
     team_id=0,
     player_id=0,
     season_type_all_star="Regular Season",
     season_nullable="2025-26",
     context_measure_simple="FGA",
-    timeout= 60
+    timeout=60,
 )
+if date_from is not None:
+    shot_kwargs["date_from_nullable"] = date_from.strftime("%m/%d/%Y")
 
+shots = shotchartdetail.ShotChartDetail(**shot_kwargs)
 df = shots.get_data_frames()[0]
-
-#print("Shape:", df.shape)
-#print("\nColumns:\n", df.columns.tolist())
-
-df.to_csv('202526_shots.csv', index=False)
+db.insert_shots(df.to_dict(orient="records"))
 
 player_stats = leaguedashplayerstats.LeagueDashPlayerStats(
     season="2025-26",
@@ -25,4 +27,4 @@ player_stats = leaguedashplayerstats.LeagueDashPlayerStats(
 player_df = player_stats.get_data_frames()[0]
 player_df = player_df[["PLAYER_ID", "FG_PCT", "FG3_PCT"]]
 
-player_df.to_csv('player_stats.csv', index=False)
+db.upsert_player_stats(player_df.to_dict(orient="records"))
