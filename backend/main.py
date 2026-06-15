@@ -2,9 +2,9 @@ from fastapi import FastAPI
 import pickle
 from contextlib import asynccontextmanager
 
-import pandas as pd
 from pydantic import BaseModel
 
+import db
 from serve import predict
 import json
 
@@ -22,8 +22,7 @@ async def lifespan(app: FastAPI):
     with open("feature_names.json", "r") as f:
         app.state.feature_names = json.load(f)
 
-    player_df = pd.read_csv("player_stats.csv")
-    app.state.player_stats = player_df.set_index("PLAYER_ID")[["FG_PCT", "FG3_PCT"]].to_dict(orient="index")
+    app.state.player_stats = db.fetch_all_player_stats()
 
     yield
 
