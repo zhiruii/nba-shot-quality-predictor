@@ -10,16 +10,16 @@ import json
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    with open("model.pkl", "rb") as f:
+    with open("artifacts/model.pkl", "rb") as f:
         app.state.model = pickle.load(f)
 
-    with open("encoder.pkl", "rb") as f:
+    with open("artifacts/encoder.pkl", "rb") as f:
         app.state.encoder = pickle.load(f)
 
-    with open("scaler.pkl", "rb") as f:
+    with open("artifacts/scaler.pkl", "rb") as f:
         app.state.scaler = pickle.load(f)
 
-    with open("feature_names.json", "r") as f:
+    with open("artifacts/feature_names.json", "r") as f:
         app.state.feature_names = json.load(f)
 
     app.state.player_stats = db.fetch_all_player_stats()
