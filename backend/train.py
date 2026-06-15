@@ -1,4 +1,5 @@
 import pandas as pd
+import db
 from feature import featurize
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import numpy as np
@@ -8,12 +9,11 @@ from sklearn.pipeline import Pipeline
 import pickle
 import json
 
-df = pd.read_csv("202526_shots.csv")
+rows = db.fetch_all_shots()
+df = pd.DataFrame(rows)
 
-player_df = pd.read_csv("player_stats.csv")
-player_stats = player_df.set_index("PLAYER_ID")[["FG_PCT", "FG3_PCT"]].to_dict(orient="index")
+player_stats = db.fetch_all_player_stats()
 
-rows = df.to_dict(orient = 'records')
 features_df = pd.DataFrame([featurize(row, player_stats=player_stats) for row in rows])
 
 cat_df = features_df[["SHOT_TYPE", "SHOT_ZONE_BASIC", "ACTION_TYPE"]]
