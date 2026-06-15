@@ -45,15 +45,15 @@ model = LogisticRegression(max_iter=1000)
 model.fit(X, y)
 
 #print(encoder.get_feature_names_out())
-with open("model.pkl", "wb") as f:
+with open("artifacts/model.pkl", "wb") as f:
     pickle.dump(model, f)
 
-with open("encoder.pkl", "wb") as f1:
+with open("artifacts/encoder.pkl", "wb") as f1:
     pickle.dump(encoder, f1)
 
-with open("scaler.pkl", "wb") as f2:
+with open("artifacts/scaler.pkl", "wb") as f2:
     pickle.dump(scaler, f2)
 
 num_cols = ["SHOT_DISTANCE", "SHOT_ANGLE", "TIME_LEFT_IN_Q", "PERIOD", "PLAYER_FG_PCT", "PLAYER_3PT_PCT"]
 feature_names = num_cols + encoder.get_feature_names_out().tolist()
-json.dump(feature_names, open("feature_names.json", "w"))
+json.dump(feature_names, open("artifacts/feature_names.json", "w"))
