@@ -44,6 +44,14 @@ def predict_main(shot: ShotFeatures):
     shot_dict = shot.model_dump()
     return predict(app.state.model, app.state.encoder, app.state.scaler, shot_dict, player_stats=app.state.player_stats)
 
+@app.get("/players")
+def get_players():
+    players = [
+        {"player_id": pid, "player_name": stats["PLAYER_NAME"], "fg_pct": stats["FG_PCT"], "fg3_pct": stats["FG3_PCT"]}
+        for pid, stats in app.state.player_stats.items()
+    ]
+    return sorted(players, key=lambda p: p["player_name"])
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
