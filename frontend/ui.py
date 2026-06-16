@@ -3,7 +3,7 @@ import requests
 
 FASTAPI_URL = "https://nba-shot-predictor-ggd6.onrender.com"
 
-st.title("NBA 2025-26 Shot Quality Predictor")
+st.title("NBA Shot Quality Predictor")
 st.caption("Predicts the probability of an NBA shot going in based on shot characteristics and player shooting ability.")
 
 st.subheader("Shot Location Reference")
