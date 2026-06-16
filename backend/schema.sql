@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS shots (
     game_date DATE,
     htm TEXT,
     vtm TEXT,
+    fg_pct REAL,
+    fg3_pct REAL,
     UNIQUE (game_id, game_event_id)
 );
 
