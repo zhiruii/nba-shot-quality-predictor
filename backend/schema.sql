@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS shots (
 
 CREATE TABLE IF NOT EXISTS player_stats (
     player_id INTEGER PRIMARY KEY,
+    player_name TEXT,
     fg_pct REAL,
     fg3_pct REAL,
     season TEXT
