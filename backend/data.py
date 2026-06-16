@@ -25,6 +25,6 @@ player_stats = leaguedashplayerstats.LeagueDashPlayerStats(
 )
 
 player_df = player_stats.get_data_frames()[0]
-player_df = player_df[["PLAYER_ID", "FG_PCT", "FG3_PCT"]]
+player_df = player_df[["PLAYER_ID", "PLAYER_NAME", "FG_PCT", "FG3_PCT"]]
 
 db.upsert_player_stats(player_df.to_dict(orient="records"))

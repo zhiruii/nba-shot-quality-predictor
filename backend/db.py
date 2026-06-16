@@ -17,7 +17,7 @@ SHOTS_COLUMNS = [
 
 SEASON = "2025-26"
 
-PLAYERS_COLUMNS = ["PLAYER_ID", "FG_PCT", "FG3_PCT", "SEASON"]
+PLAYERS_COLUMNS = ["PLAYER_ID", "PLAYER_NAME", "FG_PCT", "FG3_PCT", "SEASON"]
 
 def get_connection():
     return psycopg2.connect(os.environ["DATABASE_URL"])
@@ -75,6 +75,7 @@ def upsert_player_stats(players):
         INSERT INTO player_stats ({", ".join(columns)})
         VALUES %s
         ON CONFLICT (player_id) DO UPDATE SET
+            player_name = EXCLUDED.player_name,
             fg_pct = EXCLUDED.fg_pct,
             fg3_pct = EXCLUDED.fg3_pct,
             season = EXCLUDED.season
@@ -122,7 +123,7 @@ def fetch_all_player_stats():
 
     result = {}
     for row in rows:
-        player_id, fg_pct, fg3_pct, season = row
-        result[player_id] = {"FG_PCT": fg_pct, "FG3_PCT": fg3_pct}
+        player_id, player_name, fg_pct, fg3_pct, season = row
+        result[player_id] = {"PLAYER_NAME": player_name, "FG_PCT": fg_pct, "FG3_PCT": fg3_pct}
 
     return result
