@@ -10,9 +10,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 rows = db.fetch_all_shots()
 df = pd.DataFrame(rows)
 
-player_stats = db.fetch_all_player_stats()
-
-features_df = pd.DataFrame([featurize(row, player_stats=player_stats) for row in rows])
+features_df = pd.DataFrame([featurize(row) for row in rows])
 
 cat_df = features_df[["SHOT_TYPE", "SHOT_ZONE_BASIC", "ACTION_TYPE"]]
 num_df = features_df[["SHOT_DISTANCE", "SHOT_ANGLE", "TIME_LEFT_IN_Q", "PERIOD", "PLAYER_FG_PCT", "PLAYER_3PT_PCT"]]
