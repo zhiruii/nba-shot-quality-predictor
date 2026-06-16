@@ -38,11 +38,13 @@ class ShotFeatures(BaseModel):
     SHOT_TYPE: str
     SHOT_ZONE_BASIC: str
     ACTION_TYPE: str
-    PLAYER_ID: int
+    FG_PCT: float
+    FG3_PCT: float
+
 @app.post("/predict")
 def predict_main(shot: ShotFeatures):
     shot_dict = shot.model_dump()
-    return predict(app.state.model, app.state.encoder, app.state.scaler, shot_dict, player_stats=app.state.player_stats)
+    return predict(app.state.model, app.state.encoder, app.state.scaler, shot_dict)
 
 @app.get("/players")
 def get_players():
