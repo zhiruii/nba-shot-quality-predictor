@@ -1,6 +1,6 @@
 # NBA Shot Quality Predictor
 
-A backend ML system that predicts the probability of an NBA shot going in, built on a live PostgreSQL database with automated weekly data refresh via GitHub Actions.
+A backend ML system that predicts the probability of any 2025-26 NBA shot going in, built on a live PostgreSQL database with automated weekly data refresh via GitHub Actions.
 
 ---
 
