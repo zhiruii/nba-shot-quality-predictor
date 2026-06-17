@@ -53,7 +53,7 @@ During a current season or when a new season starts: `data.py` fetches new shots
 | Feature | Source | Notes |
 |---|---|---|
 | `SHOT_DISTANCE` | Raw | Direct from API |
-| `SHOT_ANGLE` | `LOC_X`, `LOC_Y` | `atan2(LOC_Y, LOC_X)` | Encodes shot direction |
+| `SHOT_ANGLE` | `LOC_X`, `LOC_Y` | `atan2(LOC_Y, LOC_X)` — encodes shot direction |
 | `TIME_LEFT_IN_Q` | `MINUTES_REMAINING`, `SECONDS_REMAINING` | Combined into total seconds |
 | `PERIOD` | Raw | Overtime periods included |
 | `SHOT_TYPE` | Categorical | One-hot encoded (2PT / 3PT) |
@@ -76,7 +76,7 @@ Player FG% and 3PT% are included as numeric features. Fallback for missing stats
 - `OneHotEncoder(sparse_output=False, handle_unknown='error')` on categorical columns
 - `StandardScaler()` on the full 28-column feature matrix after hstack
 
-**Evaluation:** 80/20 stratified train/test split. Train AUC: 0.654, Test AUC: 0.654 — scores match exactly, confirming no overfitting.
+**Evaluation:** 80/20 stratified train/test split. Train AUC: 0.654, Test AUC: 0.655 — near-identical scores confirm no overfitting.
 
 The dominant missing signal is defender proximity, representing how contested the shot is. This information is not available from `nba_api`.
 
@@ -88,7 +88,7 @@ Two tables in PostgreSQL (Supabase):
 
 **`shots`** — one row per shot attempt. `fg_pct` and `fg3_pct` are baked in at ingest time. `UNIQUE (game_id, game_event_id)` constraint makes the incremental upsert safe: re-running `data.py` after a boundary overlap produces zero duplicates.
 
-**`player_stats`** — one row per player per season. Upserted on each run via `ON CONFLICT (player_id) DO UPDATE SET fg_pct = EXCLUDED.fg_pct, ...`. Used only by the `/players` API endpoint, not used in training or inference.
+**`player_stats`** — one row per player, overwritten on each run via `ON CONFLICT (player_id) DO UPDATE SET fg_pct = EXCLUDED.fg_pct, ...`. Used only by the `/players` API endpoint, not used in training or inference.
 
 ---
 
@@ -126,14 +126,15 @@ Data flows in one direction: ingest → features → train → serve → API. Ea
 nba_api
     ↓
 data.py  ←→  db.py  ←→  PostgreSQL (Supabase)
-                              ↓
-                          train.py → feature.py → artifacts/
-                                                      ↓
-                          main.py  ←  serve.py  ← model.pkl
-                             ↑                     encoder.pkl
-                         frontend/                 scaler.pkl
-                           ui.py                   feature_names.json
-                        (Streamlit)
+                ↑
+            train.py → feature.py → artifacts/
+                                        ↓
+             main.py  ←  serve.py  ← model.pkl
+             main.py  ←  db.py       encoder.pkl
+                ↑                     scaler.pkl
+            frontend/                 feature_names.json
+              ui.py
+           (Streamlit)
 ```
 
 Critical constraints enforced by design:
