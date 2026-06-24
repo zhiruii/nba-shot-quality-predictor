@@ -1,8 +1,8 @@
-name: Weekly data refresh
+name: Data refresh
 
 on:
   schedule:
-    - cron: "0 6 * * 1"  # every Monday at 06:00 UTC
+    - cron: "0 6 */2 * *"  # every 2 days at 06:00 UTC
   workflow_dispatch: {}
 
 jobs:
