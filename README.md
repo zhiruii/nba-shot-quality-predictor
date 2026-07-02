@@ -1,6 +1,6 @@
 # NBA Shot Quality Predictor
 
-A full-stack ML system that predicts the probability of any NBA shot going in, built on a growing PostgreSQL database that accumulates shots across seasons with automated weekly refresh via GitHub Actions.
+A full-stack ML system that predicts the probability of any NBA shot going in, built on a growing PostgreSQL database that accumulates shots across seasons with automated refresh every 2 days via GitHub Actions.
 
 Live site → https://nba-shot-quality-predictor.streamlit.app/
 
@@ -18,7 +18,7 @@ The four things this project demonstrates that the MVP Predictor doesn't:
 
 **2. Stateful, incremental data fetching.** `data.py` doesn't blindly re-pull everything on each run. It queries `SELECT MAX(game_date) FROM shots`, then calls the NBA API with `date_from_nullable` set to that date to fetch only shots newer than what's already stored. Re-running the script is safe by design, as `INSERT ... ON CONFLICT (game_id, game_event_id) DO NOTHING` means duplicate fetches produce no duplicate rows.
 
-**3. A scheduled pipeline that runs without me.** A GitHub Actions workflow triggers every Monday at 06:00 UTC. It checks out the repo, installs dependencies, and runs `data.py`. The database stays current without any manual intervention.
+**3. A scheduled pipeline that runs without me.** A GitHub Actions workflow triggers every 2 days at 06:00 UTC on a self-hosted runner. It checks out the repo and runs `data.py`. The database stays current without any manual intervention.
 
 **4. A schema designed to support a model that improves over time.** Two tables with deliberately different retention behaviour — shots are historical and self-contained, player stats are always current. See the Schema Design section below.
 
@@ -42,7 +42,7 @@ During a current season or when a new season starts: `data.py` fetches new shots
 
 `nba_api` `shotchartdetail` endpoint. All players, accumulating across seasons starting from 2025-26.
 
-- ~219,160 shot attempts in the initial season, growing with each weekly refresh
+- ~219,160 shot attempts in the initial season, growing with each refresh
 - ~115k misses, ~104k makes — nearly balanced classes
 - Player shooting tendencies (season FG% and 3PT%) merged into each shot row at ingest time
 
@@ -95,9 +95,9 @@ Two tables in PostgreSQL (Supabase):
 ## Automated Pipeline
 
 ```
-Every Monday, 06:00 UTC
+Every 2 days, 06:00 UTC
         ↓
-GitHub Actions: checkout → pip install → python data.py
+GitHub Actions (self-hosted runner): checkout → python data.py
         ↓
 data.py: SELECT MAX(game_date) FROM shots
         ↓
@@ -114,7 +114,7 @@ Database is current. No manual step required.
 
 Retraining is kept manual, run `python train.py` when you want the model to reflect new data, then commit the artifacts. Separating "data freshness" from "retrain cadence".
 
-Known limitation: `stats.nba.com` occasionally times out from GitHub-hosted runner IPs. Manual re-run via `workflow_dispatch` is the fix.
+Note: `stats.nba.com` blocks requests from GitHub-hosted runner IP ranges (Azure datacenters). The pipeline runs on a self-hosted runner to avoid this.
 
 ---
 
