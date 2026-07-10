@@ -71,3 +71,20 @@ def pixel_to_data(px, py, disp_w, disp_h):
     loc_x = px / disp_w * (X_MAX - X_MIN) + X_MIN
     loc_y = Y_MAX - py / disp_h * (Y_MAX - Y_MIN)
     return round(loc_x), round(loc_y)
+
+def derive_shot(loc_x, loc_y):
+    dist_tenths = math.hypot(loc_x, loc_y)
+    distance_ft = int(dist_tenths // 10)
+    if loc_y > Y_MAX:
+        return distance_ft, "3PT Field Goal", "Backcourt"
+    if loc_y <= 87.5 and loc_x <= -220:
+        return distance_ft, "3PT Field Goal", "Left Corner 3"
+    if loc_y <= 87.5 and loc_x >= 220:
+        return distance_ft, "3PT Field Goal", "Right Corner 3"
+    if loc_y > 87.5 and dist_tenths >= 237.5:
+        return distance_ft, "3PT Field Goal", "Above the Break 3"
+    if dist_tenths < 40:
+        return distance_ft, "2PT Field Goal", "Restricted Area"
+    if abs(loc_x) <= 80 and loc_y <= 138.5:
+        return distance_ft, "2PT Field Goal", "In The Paint (Non-RA)"
+    return distance_ft, "2PT Field Goal", "Mid-Range"
