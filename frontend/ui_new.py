@@ -88,3 +88,17 @@ def derive_shot(loc_x, loc_y):
     if abs(loc_x) <= 80 and loc_y <= 138.5:
         return distance_ft, "2PT Field Goal", "In The Paint (Non-RA)"
     return distance_ft, "2PT Field Goal", "Mid-Range"
+
+SHOT_TYPES = ["2PT Field Goal", "3PT Field Goal"]
+SHOT_ZONES = [
+    "Restricted Area", "In The Paint (Non-RA)", "Mid-Range",
+    "Left Corner 3", "Right Corner 3", "Above the Break 3", "Backcourt",
+]
+
+if "loc_x" not in st.session_state:
+    st.session_state.loc_x = 0
+    st.session_state.loc_y = 150
+    d, t, z = derive_shot(0, 150)
+    st.session_state.shot_distance = d
+    st.session_state.shot_type = t
+    st.session_state.shot_zone = z
