@@ -102,3 +102,18 @@ if "loc_x" not in st.session_state:
     st.session_state.shot_distance = d
     st.session_state.shot_type = t
     st.session_state.shot_zone = z
+
+st.title("NBA Shot Quality Predictor")
+st.caption("Predicts the probability of an NBA shot going in based on shot characteristics and player shooting ability.")
+
+court_col, fields_col = st.columns([3, 2])
+
+with court_col:
+    img = Image.open(io.BytesIO(court_image_bytes())).convert("RGB")
+    px, py = data_to_pixel(st.session_state.loc_x, st.session_state.loc_y)
+    draw = ImageDraw.Draw(img)
+    
+    r = 7
+    draw.ellipse([px - r, py - r, px + r, py + r], outline="#d9391f", width=3)
+    draw.line([px - r - 4, py, px + r + 4, py], fill="#d9391f", width=1)
+    draw.line([px, py - r - 4, px, py + r + 4], fill="#d9391f", width=1)
