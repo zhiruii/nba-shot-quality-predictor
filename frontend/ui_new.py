@@ -132,3 +132,10 @@ with court_col:
             st.session_state.shot_type = t
             st.session_state.shot_zone = z
             st.rerun()
+
+with fields_col:
+    st.number_input("LOC_X (−250 left to 250 right)", min_value=-250, max_value=250, key="loc_x")
+    st.number_input("LOC_Y (−47 baseline to 422 halfcourt)", min_value=-47, max_value=422, key="loc_y")
+    st.number_input("Shot Distance (ft)", min_value=0, max_value=94, key="shot_distance")
+    st.selectbox("Shot Type", SHOT_TYPES, key="shot_type")
+    st.selectbox("Shot Zone", SHOT_ZONES, key="shot_zone")
