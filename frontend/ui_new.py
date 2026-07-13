@@ -117,3 +117,18 @@ with court_col:
     draw.ellipse([px - r, py - r, px + r, py + r], outline="#d9391f", width=3)
     draw.line([px - r - 4, py, px + r + 4, py], fill="#d9391f", width=1)
     draw.line([px, py - r - 4, px, py + r + 4], fill="#d9391f", width=1)
+    
+    click = streamlit_image_coordinates(img, key="court", cursor="crosshair", use_column_width="always")
+
+    if click is not None:
+        raw = (click["x"], click["y"])
+        if st.session_state.get("last_click") != raw:
+            st.session_state.last_click = raw
+            loc_x, loc_y = pixel_to_data(click["x"], click["y"], click["width"], click["height"])
+            st.session_state.loc_x = loc_x
+            st.session_state.loc_y = loc_y
+            d, t, z = derive_shot(loc_x, loc_y)
+            st.session_state.shot_distance = d
+            st.session_state.shot_type = t
+            st.session_state.shot_zone = z
+            st.rerun()
