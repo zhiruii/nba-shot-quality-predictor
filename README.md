@@ -4,6 +4,10 @@ A full-stack ML system that predicts the probability of any NBA shot going in, b
 
 Live site → https://nba-shot-quality-predictor1.streamlit.app/
 
+> **Note:** The backend is hosted on Render's free tier, which spins down after ~15 minutes of inactivity. The first prediction after idle time can take up to a few minutes while the server cold-starts. Subsequent predictions are must faster.
+
+The frontend is an interactive half-court: click anywhere on the court to place the shot, and shot distance, zone, and angle are derived from that click instead of typed in manually.
+
 ---
 
 ## What this project is actually about
@@ -30,7 +34,7 @@ The schema has two tables with deliberately different retention behaviour, desig
 
 **`shots`** is an append-only historical table. Every shot row permanently carries `fg_pct` and `fg3_pct` baked in at ingest time, reflecting the shooter's stats as of that week's pipeline run. This means a November shot is paired with November running stats, not end-of-season stats. That's a feature that reflects what the shooter's performance actually looked like at the time of the shot, which is what the model should be learning from.
 
-**`player_stats`** is non-historical, it always reflects the latest stats after each pipeline run, overwritten via upsert on every `data.py` execution. Its only role is to power the `/players` endpoint in the API (the player dropdown in the Streamlit frontend). It has no role in training or inference.
+**`player_stats`** is non-historical, it always reflects the latest stats after each pipeline run, overwritten via upsert on every `data.py` execution. Its only role is to power the `/players` API endpoint, which is not currently called by the frontend (FG%/3PT% are entered manually instead). It has no role in training or inference.
 
 The reason for baking stats into each shot row rather than joining at training time is that `player_stats` is mutable. If the join were deferred to training, every historical shot would be paired with whatever stats happened to be in `player_stats` at that moment — correct this season, wrong next season when `player_stats` gets overwritten. By embedding stats at ingest, each shot is self-contained and the training data stays temporally correct regardless of when the model is retrained.
 
@@ -133,7 +137,7 @@ data.py  ←→  db.py  ←→  PostgreSQL (Supabase)
              main.py  ←  db.py       encoder.pkl
                 ↑                     scaler.pkl
             frontend/                 feature_names.json
-              ui.py
+              ui_new.py
            (Streamlit)
 ```
 
