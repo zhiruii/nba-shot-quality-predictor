@@ -170,3 +170,21 @@ with col6:
     fg_pct = st.number_input("FG% (0.00 – 1.00)", min_value=0.0, max_value=1.0, value=0.46, step=0.01, format="%.2f")
 with col7:
     fg3_pct = st.number_input("3PT% (0.00 – 1.00)", min_value=0.0, max_value=1.0, value=0.35, step=0.01, format="%.2f")
+
+st.divider()
+if st.button("Predict", type="primary"):
+    response = requests.post(f"{FASTAPI_URL}/predict", json={
+        "SHOT_DISTANCE": st.session_state.shot_distance,
+        "LOC_X": st.session_state.loc_x,
+        "LOC_Y": st.session_state.loc_y,
+        "MINUTES_REMAINING": minutes,
+        "SECONDS_REMAINING": seconds,
+        "PERIOD": period,
+        "SHOT_TYPE": st.session_state.shot_type,
+        "SHOT_ZONE_BASIC": st.session_state.shot_zone,
+        "ACTION_TYPE": action_type,
+        "FG_PCT": fg_pct,
+        "FG3_PCT": fg3_pct,
+    })
+    prob = response.json()
+    st.metric(label="Make Probability", value=f"{prob:.1%}")
