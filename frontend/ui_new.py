@@ -139,3 +139,13 @@ with fields_col:
     st.number_input("Shot Distance (ft)", min_value=0, max_value=94, key="shot_distance")
     st.selectbox("Shot Type", SHOT_TYPES, key="shot_type")
     st.selectbox("Shot Zone", SHOT_ZONES, key="shot_zone")
+
+st.divider()
+st.subheader("Shot Details") 
+
+action_type = st.selectbox("Action Type", [
+    "Jump Shot", "Pullup Jump Shot", "Driving Layup", "Running Layup",
+    "Step Back Jump Shot", "Turnaround Jump Shot", "Cutting Layup Shot",
+    "Fadeaway Jump Shot", "Floating Jump Shot", "Layup", "Dunk",
+    "Hook Shot", "Putback Dunk Shot",
+])
