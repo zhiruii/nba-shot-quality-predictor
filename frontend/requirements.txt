@@ -1,2 +1,5 @@
 streamlit
 requests
+matplotlib
+Pillow
+streamlit-image-coordinates
