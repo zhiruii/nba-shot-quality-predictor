@@ -2,7 +2,7 @@
 
 A full-stack ML system that predicts the probability of any NBA shot going in, built on a growing PostgreSQL database that accumulates shots across seasons with automated refresh every 2 days via GitHub Actions.
 
-Live site → https://nba-shot-quality-predictor.streamlit.app/
+Live site → https://nba-shot-quality-predictor1.streamlit.app/
 
 ---
 
