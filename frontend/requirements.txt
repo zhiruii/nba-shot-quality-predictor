@@ -1,4 +1,6 @@
-streamlit
+# streamlit 1.61.0 removed streamlit.elements.image.UseColumnWith,
+# which streamlit-image-coordinates 0.4.0 imports at module load.
+streamlit<1.61
 requests
 matplotlib
 Pillow
