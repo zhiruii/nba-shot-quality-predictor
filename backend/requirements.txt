@@ -1,8 +1,8 @@
-fastapi
-uvicorn
-numpy
-pandas
-scikit-learn
-nba_api
-psycopg2-binary
-python-dotenv
+scikit-learn==1.8.0
+numpy>=2.3,<3
+fastapi>=0.136,<1
+uvicorn>=0.46,<1
+psycopg2-binary>=2.9,<3
+python-dotenv>=1,<2
+pandas>=2.3.3,<3
+nba_api>=1.11,<2
