@@ -11,7 +11,11 @@
     const secondsRemaining = ref(30)
     const fgPct = ref(0.46)
     const fg3Pct = ref(0.35)
-    function predictShot() {
+    async function predictShot() {
+        isLoading.value = true
+        errorMessage.value = ''
+        prediction.value = null
+
         const shotData = {
             SHOT_DISTANCE: shotDistance.value,
             LOC_X: locX.value,
@@ -24,6 +28,26 @@
             ACTION_TYPE: actionType.value,
             FG_PCT: fgPct.value,
             FG3_PCT: fg3Pct.value,
+        }
+
+        try {
+            const response = await fetch('/api/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(shotData),
+            })
+
+            if (!response.ok) {
+                throw new Error(`Prediction failed (HTTP ${response.status})`)
+            }
+
+            prediction.value = await response.json()
+        } catch (error) {
+            errorMessage.value = error.message
+        } finally {
+            isLoading.value = false
         }
     }
 
@@ -180,7 +204,15 @@
             required
         />
     </div>
-    <button type="button" @click="predictShot">
-        Predict
+    <button type="button" @click="predictShot" :disabled="isLoading">
+        {{ isLoading ? 'Predicting...' : 'Predict' }}
     </button>
+
+    <p v-if="prediction !== null">
+        Make probability: {{ (prediction * 100).toFixed(1) }}%
+    </p>
+
+    <p v-if="errorMessage" role="alert">
+        {{ errorMessage }}
+    </p>
 </template>
