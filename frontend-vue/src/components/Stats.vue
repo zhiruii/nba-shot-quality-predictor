@@ -11,6 +11,24 @@
     const secondsRemaining = ref(30)
     const fgPct = ref(0.46)
     const fg3Pct = ref(0.35)
+    function predictShot() {
+        const shotData = {
+            SHOT_DISTANCE: shotDistance.value,
+            LOC_X: locX.value,
+            LOC_Y: locY.value,
+            MINUTES_REMAINING: minutesRemaining.value,
+            SECONDS_REMAINING: secondsRemaining.value,
+            PERIOD: period.value,
+            SHOT_TYPE: shotType.value,
+            SHOT_ZONE_BASIC: shotZone.value,
+            ACTION_TYPE: actionType.value,
+            FG_PCT: fgPct.value,
+            FG3_PCT: fg3Pct.value,
+        }
+
+        console.log(shotData)
+    }
+
 </script>
 
 <template>
@@ -164,5 +182,7 @@
             required
         />
     </div>
-  
+    <button type="button" @click="predictShot">
+        Predict
+    </button>
 </template>

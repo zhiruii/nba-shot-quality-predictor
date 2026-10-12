@@ -4,7 +4,7 @@
 
 <template>
   <main>
-    <h1>NBA Shot Quality Predictor</h1>
+    <h1>NBA Shot Predictor</h1>
     <Stats />
   </main>
 </template>
