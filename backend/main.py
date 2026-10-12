@@ -3,7 +3,7 @@ import pickle
 from contextlib import asynccontextmanager
 
 from pydantic import BaseModel
-
+from fastapi.middleware.cors import CORSMiddleware
 import db
 from serve import predict
 import json
@@ -27,7 +27,12 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://nba-shot-vue.onrender.com"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 class ShotFeatures(BaseModel):
     SHOT_DISTANCE: int
     LOC_X: int

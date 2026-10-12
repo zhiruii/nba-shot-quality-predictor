@@ -14,6 +14,7 @@
     const prediction = ref(null)
     const isLoading = ref(false)
     const errorMessage = ref('')
+    const apiUrl = import.meta.env.VITE_API_URL || '/api'
     async function predictShot() {
         isLoading.value = true
         errorMessage.value = ''
@@ -34,7 +35,7 @@
         }
 
         try {
-            const response = await fetch('/api/predict', {
+            const response = await fetch(`${apiUrl}/predict`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
