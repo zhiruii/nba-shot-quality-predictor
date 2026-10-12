@@ -25,8 +25,6 @@
             FG_PCT: fgPct.value,
             FG3_PCT: fg3Pct.value,
         }
-
-        console.log(shotData)
     }
 
 </script>
