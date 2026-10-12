@@ -11,6 +11,9 @@
     const secondsRemaining = ref(30)
     const fgPct = ref(0.46)
     const fg3Pct = ref(0.35)
+    const prediction = ref(null)
+    const isLoading = ref(false)
+    const errorMessage = ref('')
     async function predictShot() {
         isLoading.value = true
         errorMessage.value = ''
@@ -104,7 +107,7 @@
     </div>
 
     <div>
-        <lable for="shot-zone"> Shot Zone</lable>
+        <label for="shot-zone"> Shot Zone</label>
         <select id="shot-zone" v-model="shotZone">
             <option value="Restricted Area">Restricted Area</option>
             <option value="In The Paint (Non-RA)">In The Paint (Non-RA)</option>
